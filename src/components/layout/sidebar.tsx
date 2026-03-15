@@ -48,7 +48,7 @@ interface ComingSoonItem {
 }
 
 const activeModules: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { id: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { id: 'inbox', label: 'Inbox', href: '/inbox', icon: Mail },
   { id: 'summaries', label: 'Summaries', href: '/summaries', icon: ListFilter },
   { id: 'reply-queue', label: 'Reply Queue', href: '/reply-queue', icon: MessageSquareReply },
@@ -79,7 +79,7 @@ export function Sidebar() {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar)
 
   function isActive(href: string): boolean {
-    if (href === '/') return pathname === '/'
+    if (href === '/dashboard') return pathname === '/dashboard'
     return pathname.startsWith(href)
   }
 

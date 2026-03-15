@@ -131,3 +131,14 @@ body {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+
+/* Gold line animation for landing page */
+@keyframes goldLine {
+  0%, 100% { opacity: 0.3; transform: translateX(-50%) scaleY(0.8); }
+  50% { opacity: 1; transform: translateX(-50%) scaleY(1); }
+}
+
+/* Smooth scroll for anchor links */
+html {
+  scroll-behavior: smooth;
+}

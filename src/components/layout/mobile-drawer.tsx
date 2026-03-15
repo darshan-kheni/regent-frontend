@@ -45,7 +45,7 @@ interface ComingSoonItem {
 }
 
 const activeModules: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { id: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { id: 'inbox', label: 'Inbox', href: '/inbox', icon: Mail },
   { id: 'reply-queue', label: 'Reply Queue', href: '/reply-queue', icon: MessageSquareReply },
   { id: 'sent', label: 'Sent', href: '/sent', icon: Send },
@@ -92,7 +92,7 @@ export function MobileDrawer() {
   }, [mobileDrawerOpen])
 
   function isActive(href: string): boolean {
-    if (href === '/') return pathname === '/'
+    if (href === '/dashboard') return pathname === '/dashboard'
     return pathname.startsWith(href)
   }
 

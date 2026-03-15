@@ -28,7 +28,7 @@ export default function LoginPage() {
         return
       }
 
-      router.push('/')
+      router.push('/dashboard')
       router.refresh()
     } catch {
       setError('Unable to connect. Check your internet connection.')

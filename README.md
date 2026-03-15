@@ -113,13 +113,24 @@ On first login, `TimezoneSync` detects the browser timezone and saves it to the 
 
 ---
 
-## Pages (22 routes)
+## Pages (27 routes)
 
-### Core Workflow
+### Public (no auth required)
 
 | Route | Purpose |
 |-------|---------|
-| `/` | Dashboard — morning overview with metrics and urgent items |
+| `/` | Landing page — hero, features, pricing, testimonials, FAQ, footer |
+| `/login` | OAuth login (Google, Microsoft) |
+| `/privacy` | Privacy Policy |
+| `/terms` | Terms of Service |
+| `/gdpr` | GDPR Compliance |
+| `/security` | Security overview with architecture details |
+
+### Core Workflow (authenticated)
+
+| Route | Purpose |
+|-------|---------|
+| `/dashboard` | Morning overview with metrics, urgent items, activity feed |
 | `/inbox` | Email list with account/category filtering |
 | `/inbox/[emailId]` | Full email detail with AI summary |
 | `/summaries` | AI brief feed with date range filters |
@@ -154,14 +165,23 @@ On first login, `TimezoneSync` detects the browser timezone and saves it to the 
 ```
 src/
   app/
+    favicon.svg                # Gold "R" in square border (SVG favicon)
+    icon.svg                   # Apple touch icon
+    (marketing)/               # Public pages (no auth required)
+      page.tsx                 # Landing page (13 sections)
+      layout.tsx               # Minimal marketing layout
+      privacy/                 # Privacy Policy
+      terms/                   # Terms of Service
+      gdpr/                    # GDPR Compliance
+      security/                # Security overview
     (auth)/login/              # OAuth login (Google, Microsoft)
     (auth)/callback/           # OAuth redirect handler
     (dashboard)/               # Protected layout (sidebar + topbar)
-      page.tsx                 # Dashboard home
+      dashboard/page.tsx       # Dashboard home (/dashboard)
       inbox/                   # Email list + [emailId] detail
       summaries/               # AI summary feed
       reply-queue/             # Draft approval queue
-      ...20 more pages
+      ...17 more pages
   components/                  # 107 components in 18 directories
     ui/          16 base       # Button, Card, Modal, Toggle, Badge, etc.
     layout/       9            # Sidebar, Topbar, TokenMeter, PipelineStatus
