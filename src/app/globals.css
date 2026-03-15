@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/* ─── Animations ─── */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Regent Design Tokens ─── */
+@theme {
+  /* Typography */
+  --font-display: "EB Garamond", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  /* Gold Accent Scale */
+  --color-gold-50:  #faf6ee;
+  --color-gold-100: #f2ebd6;
+  --color-gold-200: #e6d5aa;
+  --color-gold-300: #d8be7d;
+  --color-gold-400: #d0ad6a;
+  --color-gold-500: #c9a96e;
+  --color-gold-600: #a38856;
+  --color-gold-700: #8a6e3a;
+  --color-gold-800: #7d6a3e;
+  --color-gold-900: #5e4d25;
+  --color-gold-950: #3d3218;
+
+  /* Category Colors */
+  --color-urgent:   #D4645D;
+  --color-work:     #7EA3C2;
+  --color-finance:  #C9A96E;
+  --color-reading:  #9B7EBD;
+  --color-personal: #C27E9B;
+  --color-system:   #6E6660;
+
+  /* Status Colors */
+  --color-ok:       #6FAD76;
+  --color-critical: #D4645D;
+  --color-info:     #7EA3C2;
+  --color-warning:  #C9A96E;
+
+  /* Border radius: zero everywhere (Regent design mandate) */
+  --radius-none: 0px;
+  --radius-sm:   0px;
+  --radius:      0px;
+  --radius-md:   0px;
+  --radius-lg:   0px;
+  --radius-xl:   0px;
+  --radius-2xl:  0px;
+  --radius-3xl:  0px;
+  --radius-full: 9999px;  /* Keep for Avatar circular shape */
+
+  /* Easing */
+  --ease-luxury: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* Shadows (directional, no glow) */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.12);
+  --shadow:    0 2px 8px 0 rgb(0 0 0 / 0.18);
+  --shadow-md: 0 4px 16px 0 rgb(0 0 0 / 0.20);
+  --shadow-lg: 0 8px 32px 0 rgb(0 0 0 / 0.24);
+}
+
+/* ─── Dark/Light Theme Variants ─── */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root,
+[data-theme="light"] {
+  --bg-primary:     #F8F6F2;
+  --bg-secondary:   #F3F0EB;
+  --bg-elevated:    #ffffff;
+  --bg-card:        #ffffff;
+  --bg-sidebar:     #F3F0EB;
+
+  --text-primary:   #1a1714;
+  --text-secondary: #5c554d;
+  --text-muted:     #8a827a;
+
+  --border-default:  #E6E3DC;
+  --border-subtle:   rgba(138, 110, 58, 0.12);
+  --border-focus:    #8a6e3a;
+
+  --accent:          #8a6e3a;
+  --accent-hover:    #76602f;
+  --accent-subtle:   rgba(138, 110, 58, 0.06);
+  --accent-text:     #F8F6F2;
+
+  --btn-primary-bg:  #8a6e3a;
+  --btn-primary-text: #F8F6F2;
+}
+
+[data-theme="dark"] {
+  --bg-primary:     #020202;
+  --bg-secondary:   #070707;
+  --bg-elevated:    #0c0c0c;
+  --bg-card:        #0a0a0a;
+  --bg-sidebar:     #070707;
+
+  --text-primary:   #f2ece3;
+  --text-secondary: #d4cbc0;
+  --text-muted:     #6e6660;
+
+  --border-default:  rgba(201, 169, 110, 0.07);
+  --border-subtle:   rgba(201, 169, 110, 0.13);
+  --border-focus:    #c9a96e;
+
+  --accent:          #c9a96e;
+  --accent-hover:    #d0ad6a;
+  --accent-subtle:   rgba(201, 169, 110, 0.06);
+  --accent-text:     #070707;
+
+  --btn-primary-bg:  #c9a96e;
+  --btn-primary-text: #070707;
+}
+
+/* ─── Base Styles ─── */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+/* Skeleton shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
