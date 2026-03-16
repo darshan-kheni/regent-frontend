@@ -37,6 +37,17 @@ export function ComposeForm() {
       }
     }
     loadAccounts()
+
+    // Pre-fill from URL params (Forward/Resend from Sent page)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const to = params.get('to')
+      const subj = params.get('subject')
+      const b = params.get('body')
+      if (to) setToAddresses(to.split(',').map(s => s.trim()).filter(Boolean))
+      if (subj) setSubject(subj)
+      if (b) setBody(b)
+    }
   }, [])
 
   const handleAddFiles = useCallback((fileList: FileList) => {
@@ -106,6 +117,16 @@ export function ComposeForm() {
 
   return (
     <form onSubmit={handleSend} className="space-y-4">
+      {/* From account selector */}
+      {accountOptions.length > 0 && (
+        <Select
+          options={accountOptions}
+          value={selectedAccount}
+          onChange={setSelectedAccount}
+          label="From"
+        />
+      )}
+
       {/* To */}
       <AddressInput
         value={toAddresses}
@@ -193,17 +214,6 @@ export function ComposeForm() {
         style={{ borderTop: '1px solid var(--border-subtle)' }}
       >
         <div className="flex items-center gap-3">
-          {accountOptions.length > 0 && (
-            <div className="w-64">
-              <Select
-                options={accountOptions}
-                value={selectedAccount}
-                onChange={setSelectedAccount}
-                placeholder="Select account"
-                label="Send from"
-              />
-            </div>
-          )}
           <ScheduleSend />
         </div>
 
