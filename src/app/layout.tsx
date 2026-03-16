@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { EB_Garamond, Inter, JetBrains_Mono } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { ToastProvider } from '@/providers/toast-provider'
 import { ToastRenderer } from '@/providers/toast-renderer'
@@ -66,6 +67,7 @@ export default function RootLayout({
             <ToastRenderer />
           </ToastProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   )
