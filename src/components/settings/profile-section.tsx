@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { Card, Input, Button } from '@/components/ui'
 import { api } from '@/lib/api'
+import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/providers/toast-provider'
 
 interface ProfileSectionProps {
@@ -13,6 +14,7 @@ interface ProfileSectionProps {
 export function ProfileSection({ initialName, initialAvatarUrl }: ProfileSectionProps) {
   const [name, setName] = useState(initialName)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(initialAvatarUrl)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [saving, setSaving] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { addToast } = useToast()
@@ -20,6 +22,7 @@ export function ProfileSection({ initialName, initialAvatarUrl }: ProfileSection
   function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
+    setAvatarFile(file)
     const reader = new FileReader()
     reader.onload = () => {
       setAvatarPreview(reader.result as string)
@@ -30,7 +33,40 @@ export function ProfileSection({ initialName, initialAvatarUrl }: ProfileSection
   async function handleSave() {
     setSaving(true)
     try {
-      await api.put('/settings/profile', { name })
+      let avatarUrl: string | undefined
+
+      // Upload avatar to Supabase Storage if changed
+      if (avatarFile) {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const ext = avatarFile.name.split('.').pop() || 'png'
+          const path = `avatars/${user.id}.${ext}`
+
+          const { error: uploadError } = await supabase.storage
+            .from('avatars')
+            .upload(path, avatarFile, { upsert: true, contentType: avatarFile.type })
+
+          if (uploadError) {
+            // Try creating the bucket if it doesn't exist
+            await supabase.storage.createBucket('avatars', { public: true })
+            const { error: retryError } = await supabase.storage
+              .from('avatars')
+              .upload(path, avatarFile, { upsert: true, contentType: avatarFile.type })
+            if (retryError) throw retryError
+          }
+
+          const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path)
+          avatarUrl = urlData.publicUrl
+        }
+      }
+
+      // Save name + avatar URL to backend
+      const payload: Record<string, string> = { name }
+      if (avatarUrl) payload.avatar_url = avatarUrl
+
+      await api.put('/settings/profile', payload)
+      setAvatarFile(null)
       addToast('success', 'Profile updated successfully')
     } catch (err) {
       addToast('error', err instanceof Error ? err.message : 'Failed to update profile')
