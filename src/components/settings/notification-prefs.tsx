@@ -133,15 +133,29 @@ export function NotificationPrefs() {
           </div>
         </div>
 
-        <Toggle
-          checked={prefs.vip_breaks_quiet}
-          onChange={(val) => setPrefs((p) => ({ ...p, vip_breaks_quiet: val }))}
-          label="VIP contacts can break quiet hours"
-        />
+        <div
+          className="flex items-center justify-between py-3 px-1"
+          style={{ borderTop: '1px solid var(--border-default)' }}
+        >
+          <div>
+            <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+              VIP Override
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+              Allow VIP contacts to break through quiet hours
+            </p>
+          </div>
+          <Toggle
+            checked={prefs.vip_breaks_quiet}
+            onChange={(val) => setPrefs((p) => ({ ...p, vip_breaks_quiet: val }))}
+          />
+        </div>
 
-        <Button onClick={handleSave} loading={saving}>
-          Save Preferences
-        </Button>
+        <div className="pt-2">
+          <Button onClick={handleSave} loading={saving}>
+            Save Preferences
+          </Button>
+        </div>
       </div>
     </Card>
   )

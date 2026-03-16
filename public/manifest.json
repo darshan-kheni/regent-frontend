@@ -1,0 +1,16 @@
+{
+  "name": "Regent — AI Executive Assistant",
+  "short_name": "Regent",
+  "description": "The AI secretary that never sleeps",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#020202",
+  "theme_color": "#C9A96E",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

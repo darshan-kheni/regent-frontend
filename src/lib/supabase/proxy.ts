@@ -28,8 +28,17 @@ export async function updateSession(request: NextRequest) {
   // CRITICAL: getUser() validates JWT with Supabase auth server (not just local decode)
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Redirect unauthenticated users to login (except public routes)
+  // Handle auth code on root URL — redirect to callback handler
   const pathname = request.nextUrl.pathname
+  const code = request.nextUrl.searchParams.get('code')
+  if (pathname === '/' && code) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/callback'
+    // Preserve the code param
+    return NextResponse.redirect(url)
+  }
+
+  // Redirect unauthenticated users to login (except public routes)
   const publicPaths = ['/', '/login', '/callback', '/privacy', '/terms', '/gdpr', '/security']
   const isPublic = publicPaths.includes(pathname)
   if (!user && !isPublic) {

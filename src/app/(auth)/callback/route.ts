@@ -2,9 +2,13 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams, origin: rawOrigin } = new URL(request.url)
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/'
+  const rawNext = searchParams.get('next') ?? '/dashboard'
+  const next = decodeURIComponent(rawNext)
+
+  // Fix Docker 0.0.0.0 origin — use localhost instead
+  const origin = rawOrigin.replace('0.0.0.0', 'localhost')
 
   if (code) {
     const supabase = await createClient()

@@ -5,7 +5,6 @@ import { Card, Button, Badge } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useToast } from '@/providers/toast-provider'
 import { useRealtimeSubscription } from '@/hooks/use-realtime'
-import { createClient } from '@/lib/supabase/client'
 import type { UserAccount } from '@/types/email'
 
 const providerLabels: Record<string, string> = {
@@ -183,37 +182,54 @@ export function ConnectedAccounts() {
     }
   }
 
-  async function handleConnectGoogle() {
-    try {
-      const supabase = createClient()
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          scopes: 'https://mail.google.com/',
-          redirectTo: `${window.location.origin}/settings`,
-        },
-      })
-      if (error) throw error
-    } catch (err) {
-      addToast('error', err instanceof Error ? err.message : 'Failed to connect Google')
-    }
+  // Open a popup window for OAuth consent flow.
+  // The popup navigates to the backend, which redirects to the provider.
+  // After consent, the backend returns an HTML page that sends tokens
+  // to this window via postMessage, then the popup closes itself.
+  function openOAuthPopup(provider: 'google' | 'microsoft') {
+    const width = 500
+    const height = 700
+    const left = window.screenX + (window.outerWidth - width) / 2
+    const top = window.screenY + (window.outerHeight - height) / 2
+
+    window.open(
+      `/api/v1/oauth/start?provider=${provider}`,
+      'oauth-popup',
+      `width=${width},height=${height},left=${left},top=${top},popup=yes`
+    )
   }
 
-  async function handleConnectMicrosoft() {
-    try {
-      const supabase = createClient()
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'azure',
-        options: {
-          scopes: 'https://outlook.office365.com/IMAP.AccessAsUser.All',
-          redirectTo: `${window.location.origin}/settings`,
-        },
+  // Listen for postMessage from the OAuth popup
+  useEffect(() => {
+    function handleMessage(event: MessageEvent) {
+      if (event.origin !== window.location.origin) return
+      if (event.data?.type !== 'oauth-callback') return
+
+      const { provider, access_token, refresh_token, email, error: oauthError } = event.data
+      if (oauthError) {
+        addToast('error', oauthError)
+        return
+      }
+
+      // Store tokens and create email account via the authenticated backend endpoint
+      api.post(`/auth/connect/${provider}`, {
+        provider_token: access_token,
+        provider_refresh_token: refresh_token,
+        scopes: provider === 'google'
+          ? ['https://mail.google.com/']
+          : ['Mail.Read', 'Mail.Send', 'IMAP.AccessAsUser.All'],
+        provider_email: email,
+      }).then(() => {
+        addToast('success', `${provider === 'google' ? 'Gmail' : 'Outlook'} account connected`)
+        fetchAccounts()
+      }).catch((err: unknown) => {
+        addToast('error', err instanceof Error ? err.message : 'Failed to connect account')
       })
-      if (error) throw error
-    } catch (err) {
-      addToast('error', err instanceof Error ? err.message : 'Failed to connect Microsoft')
     }
-  }
+
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [addToast, fetchAccounts])
 
   const domain = getDomainFromEmail(formEmail)
   const detectedProvider = domain ? (PROVIDER_PRESETS[domain]?.provider || 'IMAP') : null
@@ -541,10 +557,10 @@ export function ConnectedAccounts() {
         >
           {showAddForm ? 'Close Form' : 'Add Email Account'}
         </Button>
-        <Button variant="secondary" onClick={handleConnectGoogle}>
+        <Button variant="secondary" onClick={() => openOAuthPopup('google')}>
           Connect Google (OAuth)
         </Button>
-        <Button variant="secondary" onClick={handleConnectMicrosoft}>
+        <Button variant="secondary" onClick={() => openOAuthPopup('microsoft')}>
           Connect Microsoft (OAuth)
         </Button>
       </div>

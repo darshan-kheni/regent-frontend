@@ -70,7 +70,7 @@ export default function SentPage() {
 
   const totalCount = emails.length
   const aiDraftedCount = emails.filter(
-    (e) => e.category === 'ai_drafted' || !!e.summary
+    (e) => (e as unknown as { ai_drafted?: boolean }).ai_drafted === true
   ).length
   const deliveredCount = emails.filter((e) => e.is_read).length
 

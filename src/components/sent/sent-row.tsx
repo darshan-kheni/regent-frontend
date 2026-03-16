@@ -33,7 +33,7 @@ const statusLabelMap: Record<DeliveryStatus, string> = {
 }
 
 export function SentRow({ email, accountColor = '#4A90D9' }: SentRowProps) {
-  const recipientAddress = email.to_addresses[0] || 'Unknown'
+  const recipientAddress = email.to_addresses?.[0] || 'Unknown'
   const recipientName = formatEmailName(null, recipientAddress)
   const initials = recipientName
     .split(/[\s.@]+/)

@@ -101,14 +101,14 @@ export function SentDetail({ email, prevId, nextId }: SentDetailProps) {
           <div className="flex items-center gap-2 text-sm mt-1">
             <span style={{ color: 'var(--text-muted)' }}>To:</span>
             <span style={{ color: 'var(--text-primary)' }}>
-              {email.to_addresses.map(formatAddressWithName).join(', ')}
+              {(email.to_addresses ?? []).map(formatAddressWithName).join(', ') || 'Unknown'}
             </span>
           </div>
-          {email.cc_addresses.length > 0 && (
+          {(email.cc_addresses ?? []).length > 0 && (
             <div className="flex items-center gap-2 text-sm mt-1">
               <span style={{ color: 'var(--text-muted)' }}>CC:</span>
               <span style={{ color: 'var(--text-primary)' }}>
-                {email.cc_addresses.map(formatAddressWithName).join(', ')}
+                {(email.cc_addresses ?? []).map(formatAddressWithName).join(', ')}
               </span>
             </div>
           )}
@@ -158,11 +158,29 @@ export function SentDetail({ email, prevId, nextId }: SentDetailProps) {
           className="flex items-center gap-3 mt-6 pt-4"
           style={{ borderTop: '1px solid var(--border-subtle)' }}
         >
-          <Button variant="secondary" size="sm">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              const to = (email.to_addresses ?? [])[0] || ''
+              const subject = `Fwd: ${email.subject || ''}`
+              const body = `\n\n---------- Forwarded message ----------\nFrom: ${email.from_name || email.from_address}\nSubject: ${email.subject}\n\n${email.body_text || ''}`
+              router.push(`/compose?to=${encodeURIComponent(to)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`)
+            }}
+          >
             <Forward className="h-4 w-4 mr-2" />
             Forward
           </Button>
-          <Button variant="secondary" size="sm">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              const to = (email.to_addresses ?? []).join(',')
+              const subject = email.subject || ''
+              const body = email.body_text || ''
+              router.push(`/compose?to=${encodeURIComponent(to)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`)
+            }}
+          >
             <RefreshCw className="h-4 w-4 mr-2" />
             Resend
           </Button>

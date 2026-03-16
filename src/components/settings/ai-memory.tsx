@@ -106,9 +106,9 @@ function RulesTab() {
       const result = await api.post<UserRule>('/user-rules', {
         scope: formScope,
         type: formType,
-        rule_text: formText,
+        text: formText,
+        instruction: formText,
         contact_filter: formContactFilter || null,
-        is_active: true,
       })
       setRules((prev) => [result, ...prev])
       addToast('success', 'Rule added')
@@ -417,7 +417,8 @@ function ContextBriefsTab() {
       const result = await api.post<ContextBrief>('/context-briefs', {
         title: formTitle,
         scope: formScope,
-        brief_text: formText,
+        content: formText,
+        context: formText,
         keywords,
         expires_at: formExpiration || null,
       })

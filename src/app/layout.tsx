@@ -25,7 +25,27 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: 'Regent — AI Executive Assistant',
-  description: 'AI-powered executive assistant for high-net-worth professionals',
+  description: 'The AI secretary that never sleeps. Regent processes your email 24/7, drafts intelligent replies, manages calendars, extracts tasks, and delivers briefings — replacing your $78K/year executive assistant.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/icon.svg',
+  },
+  openGraph: {
+    title: 'Regent — AI Executive Assistant',
+    description: 'The AI secretary that never sleeps. Email processing, smart drafts, behavior intelligence, and multi-channel briefings for executives.',
+    siteName: 'Regent',
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Regent — AI Executive Assistant',
+    description: 'The AI secretary that never sleeps. Replace your $78K/year EA with AI that works 24/7.',
+  },
+  applicationName: 'Regent',
+  keywords: ['AI assistant', 'executive assistant', 'email AI', 'email automation', 'AI secretary', 'email management'],
 }
 
 export default function RootLayout({
