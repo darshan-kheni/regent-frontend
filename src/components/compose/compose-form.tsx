@@ -21,6 +21,7 @@ export function ComposeForm() {
   const [files, setFiles] = useState<File[]>([])
   const [accounts, setAccounts] = useState<UserAccount[]>([])
   const [selectedAccount, setSelectedAccount] = useState('')
+  const [scheduledAt, setScheduledAt] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
   const { addToast } = useToast()
 
@@ -84,8 +85,9 @@ export function ComposeForm() {
         bcc_addresses: bccAddresses,
         subject,
         body,
+        scheduled_at: scheduledAt,
       })
-      addToast('success', 'Email sent successfully')
+      addToast('success', scheduledAt ? 'Email scheduled successfully' : 'Email sent successfully')
       // Reset form
       setToAddresses([])
       setCcAddresses([])
@@ -93,6 +95,7 @@ export function ComposeForm() {
       setSubject('')
       setBody('')
       setFiles([])
+      setScheduledAt(null)
       setShowCcBcc(false)
     } catch (err) {
       addToast('error', err instanceof Error ? err.message : 'Failed to send email')
@@ -214,12 +217,12 @@ export function ComposeForm() {
         style={{ borderTop: '1px solid var(--border-subtle)' }}
       >
         <div className="flex items-center gap-3">
-          <ScheduleSend />
+          <ScheduleSend scheduledAt={scheduledAt} onSchedule={setScheduledAt} />
         </div>
 
         <Button type="submit" variant="primary" size="md" loading={sending}>
           <Send className="h-4 w-4 mr-2" />
-          Send
+          {scheduledAt ? 'Schedule' : 'Send'}
         </Button>
       </div>
     </form>
